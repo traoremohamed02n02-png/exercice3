@@ -1,17 +1,17 @@
-# Image de base Python 3.8
-FROM python:3.8
+FROM python:3.12-slim
 
-# Dossier de travail dans le conteneur
 WORKDIR /app
 
-# Copier le contenu du dossier api/ dans /app du conteneur
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY api/ .
 
-# Installer Flask
-RUN pip install flask
+RUN useradd -m appuser
+USER appuser
 
-# Indiquer le port utilisé par Flask
 EXPOSE 5000
 
-# Lancer l'application
+HEALTHCHECK CMD curl --fail http://localhost:5000 || exit 1
+
 CMD ["python", "app.py"]
